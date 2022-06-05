@@ -2,6 +2,7 @@ package com.example.demofilebase;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +20,20 @@ public class MainActivity extends AppCompatActivity {
         EditText name = findViewById(R.id.edname);
         EditText postion = findViewById(R.id.postion);
         Button btn = findViewById(R.id.btnClick);
+        Button show = findViewById(R.id.btnShow);
         DAOEmployee dao = new  DAOEmployee();
+        show.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,RVActivity.class);
+            startActivity(intent);
+        });
+
+        // b1 tao item_layout
+        // b2 tao activity,layout
+        // b3 tao RVAdapter extends RecycleView.Adapter<Recycleview.ViewHolder>
+        // b4 tao class EmployVH
+        // b5 tao list activity
+
+
         btn.setOnClickListener(v -> {
 
             // add

@@ -1,4 +1,4 @@
-package com.example.demofilebase;
+package com.example.demofilebase.student_manager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,25 +9,29 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
+import com.example.demofilebase.Adapter.RVAdapter;
+import com.example.demofilebase.DAOEmployee;
+import com.example.demofilebase.Employee;
+import com.example.demofilebase.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class RVActivity extends AppCompatActivity {
+
+public class StudentListActivity extends AppCompatActivity {
 
     SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
     RVAdapter adapter;
     DAOEmployee dao;
-    boolean isLoading = false;
-    String key = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rvactivity);
+        setContentView(R.layout.activity_student_list);
+
         swipeRefreshLayout = findViewById(R.id.swip);
         recyclerView = findViewById(R.id.rv);
         recyclerView.setHasFixedSize(true);
@@ -35,41 +39,23 @@ public class RVActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         adapter = new RVAdapter(this);
         recyclerView.setAdapter(adapter);
-        dao = new DAOEmployee();
-        loadData();
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                assert linearLayoutManager != null;
-                int totalItem =  linearLayoutManager.getItemCount();
-                int lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
-                if (totalItem < lastVisible + 3) {
-                    if(!isLoading) {
-                        isLoading = true;
-                        loadData();
-                    }
-                }
-            }
-        });
-    }
 
-    private void  loadData() {
-        swipeRefreshLayout.setRefreshing(true);
-        dao.get(key).addValueEventListener(new ValueEventListener() {
+         dao = new DAOEmployee();
+         loadData();
+
+    }
+    private void loadData(){
+        dao.get("").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 ArrayList<Employee> emps = new ArrayList<>();
-                for (DataSnapshot data:snapshot.getChildren()) {
+                for (DataSnapshot data : snapshot.getChildren()){
                     Employee emp = data.getValue(Employee.class);
                     emps.add(emp);
-                    key = data.getKey();
                 }
                 adapter.setItems(emps);
                 adapter.notifyDataSetChanged();
-                isLoading = false;
-                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
